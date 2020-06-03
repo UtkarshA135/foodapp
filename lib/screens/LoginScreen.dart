@@ -21,7 +21,7 @@ class LoginScreen extends StatelessWidget {
 
           if(user != null){
             Navigator.push(context, MaterialPageRoute(
-              builder: (context) => HomeScreen(user: user,)
+              builder: (context) => HomeScreen()
             ));
           }else{
             print("Error");
@@ -62,7 +62,7 @@ class LoginScreen extends StatelessWidget {
 
                       if(user != null){
                         Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => HomeScreen(user: user,)
+                            builder: (context) => HomeScreen()
                         ));
                       }else{
                         print("Error");

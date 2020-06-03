@@ -1,27 +1,112 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:maps/diners/DinerRegister.dart';
+import 'package:maps/chefs/SellersRegister.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  HomeScreen({Key key}) : super(key: key);
 
-  final FirebaseUser user;
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
 
-  HomeScreen({this.user});
+class _HomeScreenState extends State<HomeScreen> {
+  String userType;
+  Future<void> saveUserType(String _userType) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('User Type', _userType);
+  }
+
+  Future<String> _getUserType() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _userType = prefs.getString('User Type');
+    print(_userType);
+    if (_userType == null)
+      return 'None';
+    else
+      return _userType;
+  }
+
+  void _alreadyChosen() {}
+
+  @override
+  void initState() {
+    super.initState();
+
+    _getUserType().then((_type) {
+      setState(() {
+        this.userType = _type;
+      });
+      print(_type);
+      if (_type == 'Diner')
+        Navigator.pushReplacement(context,
+            new MaterialPageRoute(builder: (context) => BuyerRegisterPage()));
+      else if (_type == 'Chef') {
+        Navigator.pushReplacement(context,
+            new MaterialPageRoute(builder: (context) => SellerRegisterPage()));
+      }
+    });
+
+    //_alreadyChosen();
+  }
+
+  Container menuButton(String imageurl, String caption, Widget destination) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 15),
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: FlatButton(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: Hero(
+                    tag: '$caption',
+                    child: Image.asset(imageurl,
+                        height: MediaQuery.of(context).size.height / 4.1),
+                  ),
+                ),
+                onPressed: () async {
+                  await saveUserType(caption);
+                  Navigator.pushReplacement(context,
+                      new MaterialPageRoute(builder: (context) => destination));
+                }),
+          ),
+          Text("Proceed as ${caption}"),
+          SizedBox(
+            height: 20,
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("You are Logged in succesfully", style: TextStyle(color: Colors.lightBlue, fontSize: 32),),
-            SizedBox(height: 16,),
-            Text("${user.phoneNumber}", style: TextStyle(color: Colors.grey, ),),
-          ],
-        ),
-      ),
-    );
+        body: (userType != null)
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                    Center(
+                        child: menuButton('assets/foodie.jpg', 'Diner',
+                            BuyerRegisterPage())),
+                    Divider(),
+                    Center(
+                        child: menuButton('assets/chefs.jpg',
+                            'Chef', SellerRegisterPage()
+                            //SellerHomePage(),
+                            )),
+                  ])
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                    Center(
+                        child: Image.asset('assets/kiranaseva.png')
+                           )
+                    
+                  ]));
   }
 }
