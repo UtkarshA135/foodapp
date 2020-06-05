@@ -1,3 +1,4 @@
+import 'package:maps/diners/dinerHomepage.dart';
 import 'package:maps/services/firebaseUserProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:maps/services/authservice.dart';
@@ -42,7 +43,8 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
        
       ),
-      home: AuthService().handleAuth(),
+      home: DinerHomePage(),
+      // home: AuthService().handleAuth(),
     );
   }
 }
