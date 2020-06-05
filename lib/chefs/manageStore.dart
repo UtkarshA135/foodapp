@@ -1,0 +1,413 @@
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:maps/models/about.dart';
+import 'package:maps/models/feedback.dart';
+import 'package:maps/models/notification.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'chefinfo.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:async';
+import 'package:maps/services/chefsDetailProvider.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:flutter/services.dart';
+import 'package:multi_media_picker/multi_media_picker.dart';
+import 'dart:io';
+
+import 'chefaccount.dart';
+class ManageStore extends StatefulWidget {
+  @override
+  _ManageStoreState createState() => _ManageStoreState();
+}
+
+class _ManageStoreState extends State<ManageStore> {
+   FirebaseUser user;
+  TabController _tabController;
+  String storeName = " ";
+  String phoneNo = " ";
+  List cuisineslist =  List();
+  List imgurls =  List();
+  String sellerName = " ";
+  String storeId;
+  bool isDataLoaded;
+     var sellerDetails;
+      String storeid ;
+      var storeDetails ;
+       var scaffoldKey = GlobalKey<ScaffoldState>();
+    List<bool> choicesChipcuisine = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ];
+  static const cuisine = ['American',
+    'Belizean ',
+     'Chinese',
+     'Canadian',
+     'Japaneese',
+    'Indian',
+    'Italian',
+    'Mexican',
+    'Texan',];
+    List<File> _imgs;
+    List<String> imgUrls = List ();
+  _onImageButtonPressed(ImageSource source, {bool singleImage = false}) async {
+    var imgs;
+    imgs = await MultiMediaPicker.pickImages(source: source, singleImage: singleImage);
+    setState(() {
+       _imgs = imgs;
+    });
+  }
+   @override
+  void initState() {
+    init();
+    super.initState();}
+     init() async {
+    user = await getUser();
+    isDataLoaded =
+        Provider.of<SellerDetailsProvider>(context, listen: false).isDataLoaded;
+    _loadStoreDetails();
+  }
+_loadStoreDetails() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String storename = await pref.get("storename");
+    if (storename == null) {
+       sellerDetails = await Firestore.instance
+          .collection('chefs')
+          .document(user.uid)
+          .get();
+       storeid = sellerDetails.data['storeId'];
+      this.storeId = storeid;
+       storeDetails =
+          await Firestore.instance.collection('stores').document(storeid).get();
+      setState(() {
+        this.storeName = storeDetails.data['name'];
+        this.phoneNo = storeDetails.data['phno'];
+     
+        this.sellerName = sellerDetails.data['name'];
+      });
+      pref.setString("storename", storename);
+    } else {
+      setState(() {
+        this.storeName = storename;
+      });
+    }
+  }
+
+     uploadToFirebase() {
+   
+      _imgs.forEach((image) => {uploadImage(image)});
+
+    } 
+   Future  uploadImage (image) async{
+     
+   
+final StorageReference postImgref = FirebaseStorage.instance.ref().child('Post Images');
+var timeKey = new DateTime.now();
+final StorageUploadTask uploadTask = postImgref.child(timeKey.toString()+'.jpg').putFile(image);
+var imgurl = await(await uploadTask.onComplete).ref.getDownloadURL();
+ String url = imgurl.toString();
+print(url);
+ setState(() {
+      imgUrls.add(url);
+    });
+   
+    print(imgUrls);
+  }
+ 
+  @override
+    var images = ['assets/chefs.jpg','assets/foodie..jpg'];
+  Widget build(BuildContext context) {
+     final drawerHeader = UserAccountsDrawerHeader(
+      accountName: Text(sellerName),
+      accountEmail: Text(phoneNo),
+      decoration: BoxDecoration(
+        color: Colors.redAccent[700],
+      ),
+      currentAccountPicture: CircleAvatar(
+        backgroundColor: Colors.white,
+      ),
+    );
+    final drawerItems = ListView(
+      children: <Widget>[
+        drawerHeader,
+        ListTile(
+            title: Text('My Account'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChefAccount(),
+              ));
+            }),
+        Divider(
+          thickness: 1,
+          color: Colors.grey,
+        ),
+        ListTile(
+            title: Text('Switch to buyer mode'),
+            onTap: () {} //=> Navigator.of(context).push(_NewPage(2)),
+            ),
+        Divider(
+          thickness: 1,
+          color: Colors.grey,
+        ),
+         ListTile(
+          title: Text('Payment'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Feedbacks()),
+            );
+          },
+        ),
+        Divider(
+          thickness: 1,
+          color: Colors.grey,
+        ),
+       
+        ListTile(
+          title: Text('Notifications'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Notifications()),
+            );
+          },
+        ),
+        Divider(
+          thickness: 1,
+          color: Colors.grey,
+        ),
+        ListTile(
+          title: Text('Feedback'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Feedbacks()),
+            );
+          },
+        ),
+        Divider(
+          thickness: 1,
+          color: Colors.grey,
+        ),
+        ListTile(
+          title: Text('About'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => About()),
+            );
+          },
+        ),
+        Divider(
+          thickness: 1,
+          color: Colors.grey,
+        ),
+        ListTile(
+          title: Text('Logout'),
+          onTap: () {},
+        ),
+      ],
+    );
+    return SafeArea(
+      child: Scaffold(
+        key: scaffoldKey,
+        endDrawer: Drawer(
+          child: drawerItems,
+        ),
+        body: SingleChildScrollView(
+            child: Container(
+          color: Colors.white,
+          child: Center(
+            child: Column(
+              children: [
+                ClipPath(
+                  clipper: MyClip(),
+                  child: Container(
+                    height: 200.0,
+                    color: Colors.redAccent[700],
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 30),
+                        child: Column(
+                         
+                         
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 30),
+                                  child: Text(
+                                    "My Kitchen",
+                                    style: TextStyle(
+                                        fontSize: 22.0,
+                                        color: Colors.white,
+                                        fontFamily: 'Pacifico'),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.menu),
+                                  color: Colors.white,
+                                  iconSize: 30,
+                                  onPressed: () =>
+                                      scaffoldKey.currentState.openEndDrawer(),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 10.0),
+                            Text(
+                              storeName,
+                              style: TextStyle(
+                                  fontSize: 22.0,
+                                  color: Colors.white,
+                                  ),
+                            ),
+                            
+                            SizedBox(height: 10.0)
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.0),
+               Padding(
+                 padding: const EdgeInsets.all(10.0),
+                 child: Container(
+              height: 200,
+              child:
+                   imgUrls.length == 0 ? Text('Upload Images of your Kitchen / Work Area to ensure Safety measures'): ListView(scrollDirection: Axis.horizontal, children:  List<Widget>.generate(_imgs.length, (index) {
+                        return 
+                  Card(
+                   
+                   
+                    child: Container(
+                        width: 200,
+                        
+                        child: InkWell(
+                            onTap: () {
+                              
+                            },
+                            child: Expanded(
+                              child: Image(
+                              image: NetworkImage(imgUrls[index]),
+                                
+                              ),
+                            ))),
+                  );
+                    }
+                  
+            ),
+            ),
+            ),
+               ),
+  SizedBox(height: 10.0),
+  Padding(
+    padding: const EdgeInsets.only(left: 30,right:30),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children:[
+        IconButton(
+                                    icon: Icon(Icons.photo_library),
+                                    color: Colors.grey,
+                                    iconSize: 30,
+                                    onPressed: () {
+                                      _onImageButtonPressed(ImageSource.gallery);
+                                    }
+                                       
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.photo_camera),
+                                    color: Colors.grey,
+                                    iconSize: 30,
+                                    onPressed: () {
+                                       _onImageButtonPressed(ImageSource.camera);
+                                    }
+                                        
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.file_upload),
+                                    color: Colors.grey,
+                                    iconSize: 30,
+                                    onPressed: () {
+                                      uploadToFirebase();
+                                    }
+                                        
+                                  )
+      ]
+    ),
+  ),
+   SizedBox(height: 10.0),
+    Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("Cuisines",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold
+                )),
+          ),
+          Wrap(
+            children: List.generate(
+              choicesChipcuisine.length,
+              (i) => Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: FilterChip(
+                  selected: choicesChipcuisine[i],
+                  onSelected: (t) {
+                    setState(() {
+                      choicesChipcuisine[i] = !choicesChipcuisine[i];
+                  
+                    });
+                 
+                  },
+                  label: Text(cuisine[i]),
+                ),
+              ),
+            ),
+          ),
+
+                          
+                
+              
+              ],
+            ),
+          ),
+        )),
+      ),
+    );
+  }
+}
+class MyClip extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width, size.height - 50.0);
+    path.quadraticBezierTo(
+        size.width - 70.0, size.height, size.width / 2, size.height - 20);
+    path.quadraticBezierTo(size.width / 3.0, size.height - 32, 0, size.height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
+  }
+}
+    
+
+
+     

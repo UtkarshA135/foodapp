@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:location/location.dart';
+import 'package:maps/chefs/chef.dart';
+import 'package:maps/diners/storeComponents/store.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter/material.dart';
 
+final CollectionReference userCollection = Firestore.instance.collection('chefs');
 Future<int> registerSeller(String shopname,String phno1,String sellername,String phno2,String shopDesc)async{
    
   int statusCode =1;
@@ -34,8 +38,9 @@ Future<int> registerSeller(String shopname,String phno1,String sellername,String
     'description':shopDesc,
     'phno':phno1,
     'sellerId':user.uid,
-    'location':location
-
+    'location':location,
+    
+     
   });
 
   await Firestore.instance.collection('stores').document(shopId).setData(store).catchError((onError){statusCode =3;});

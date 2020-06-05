@@ -2,10 +2,13 @@ import 'package:maps/services/firebaseUserProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:maps/services/authservice.dart';
 import 'package:provider/provider.dart';
-
+import 'services/chefsDetailProvider.dart';
 void main() => runApp(MultiProvider(providers: [
       ChangeNotifierProvider<FirebaseUserProvider>(
           create: (context) => FirebaseUserProvider()),
+            ChangeNotifierProvider<SellerDetailsProvider>(
+          create: (context) => SellerDetailsProvider()),
+
     
     ], child: MyApp()));
 

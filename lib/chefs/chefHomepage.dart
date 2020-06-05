@@ -1,22 +1,175 @@
 import 'package:flutter/material.dart';
-import 'package:maps/services/authservice.dart';
+
+import 'dart:async';
+import 'package:maps/chefs/chefinfo.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:maps/chefs/ordersPage.dart';
+import 'package:maps/models/chat.dart';
+import 'package:maps/services/chefsDetailProvider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'manageStore.dart';
+
 class ChefHomePage extends StatefulWidget {
+  ChefHomePage({Key key}) : super(key: key);
   @override
   _ChefHomePageState createState() => _ChefHomePageState();
 }
 
-class _ChefHomePageState extends State<ChefHomePage> {
-   final AuthService _auth = AuthService();
+class _ChefHomePageState extends State<ChefHomePage>
+    with SingleTickerProviderStateMixin {
+  FirebaseUser user;
+  TabController _tabController;
+  String storeName;
+  String storeId;
+  bool isDataLoaded;
+int _page = 0;
+ GlobalKey _bottomNavigationKey = GlobalKey();
+  @override
+  void initState() {
+   // _tabController = new TabController(length: 2, vsync: this);
+    init();
+    super.initState();
+  }
+
+  init() async {
+    user = await getUser();
+    isDataLoaded =
+        Provider.of<SellerDetailsProvider>(context, listen: false).isDataLoaded;
+    _loadStoreDetails();
+  }
+
+  _loadStoreDetails() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String storename = await pref.get("storename");
+    if (storename == null) {
+      var sellerDetails = await Firestore.instance
+          .collection('chefs')
+          .document(user.uid)
+          .get();
+      String storeid = sellerDetails.data['storeId'];
+      this.storeId = storeid;
+      var storeDetails =
+          await Firestore.instance.collection('stores').document(storeid).get();
+      setState(() {
+        this.storeName = storeDetails.data['name'];
+      });
+      pref.setString("storename", storename);
+    } else {
+      setState(() {
+        this.storeName = storename;
+      });
+    }
+  }
+
+  String phoneNumber;
+  Future<void> resetUserType() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('User Type', 'None');
+  }
+
+  Future<String> getPhoneNumber() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String _phno = prefs.getString('Phone Number');
+    if (_phno != null)
+      return _phno;
+    else
+      return 'Does not exist';
+  }
+  void onTabTapped(int index) {
+   setState(() {
+     _page = index;
+   });
+ }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-       appBar: AppBar(title : Text("Chefs"),
+         final List<Widget>pageOption = [
+ManageStore(),MyOrders(),ChatScreen()
+];
+    return Consumer<SellerDetailsProvider>(
+      builder: (context, data, child) {
+        if (data.isDataLoaded)
+          return Scaffold(
+            appBar: AppBar(
+              title: Hero(
+                tag: 'Seller',
+                child: Text(
+                  storeName ?? "Store",
+                  style: TextStyle(
+                      fontFamily: 'Archia', fontWeight: FontWeight.bold),
+                ),
+              ),
+              centerTitle: true,
+              backgroundColor:   Colors.redAccent[700],
+              actions: <Widget>[],
+             /* bottom: TabBar(
+                unselectedLabelColor: Colors.white,
+                labelColor: Colors.blue[50],
+                tabs: [
+                  new Tab(
+                    icon: new Icon(Icons.shopping_basket),
+                    text: 'Orders',
+                  ),
+                  new Tab(
+                    icon: new Icon(Icons.view_list),
+                    text: 'Items Catalog',
+                  ),
+                ],
+                controller: _tabController,
+                indicatorColor: Colors.white,
+                indicatorSize: TabBarIndicatorSize.tab,
+              ),*/
+              bottomOpacity: 1,
+              elevation: 1.0,
+            ),
+           
+             body: pageOption[_page],
 
-        actions: <Widget>[
-          IconButton(icon:  Icon(Icons.exit_to_app),
-
-        onPressed: ()async { await _auth.signOut();  },)
-        ],),
+        bottomNavigationBar: CurvedNavigationBar(
+        
+          backgroundColor: Colors.white,
+          color: Colors.redAccent[700],
+          key: _bottomNavigationKey,
+          items: <Widget>[
+            Icon(Icons.store, size: 30,),
+            Icon(Icons.shopping_basket, size: 30),
+            Icon(Icons.chat, size: 30),
+            
+          ],
+          onTap:  onTabTapped, // new
+            
+        ),
+        
+           
+          );
+        else
+          return Scaffold(
+            backgroundColor: Colors.lightGreen,
+            body: Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                  Hero(
+                      tag: 'Seller',
+                      child: Container(
+                        height: 200,
+                        child: Image.asset('assets/chefs.jpg'),
+                      )),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  CupertinoActivityIndicator(
+                    radius: 25,
+                  ),
+                ])),
+          );
+      },
     );
   }
 }
+
