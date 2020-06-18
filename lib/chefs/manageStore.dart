@@ -10,6 +10,7 @@ import 'chefinfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
+import 'package:maps/services/authservice.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:async';
 import 'package:maps/services/chefsDetailProvider.dart';
@@ -215,7 +216,11 @@ print(url);
         ),
         ListTile(
           title: Text('Logout'),
-          onTap: () {},
+          onTap: () async{
+         AuthService().signOut();
+                          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context)=> AuthService().handleAuth()));
+
+          },
         ),
       ],
     );

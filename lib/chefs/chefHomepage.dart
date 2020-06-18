@@ -4,7 +4,8 @@ import 'dart:async';
 import 'package:maps/chefs/chefinfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:maps/chefs/ordersPage.dart';
+import 'package:maps/chefs/itemManage.dart';
+import 'package:maps/chefs/orderpages.dart';
 import 'package:maps/models/chat.dart';
 import 'package:maps/services/chefsDetailProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -89,7 +90,7 @@ int _page = 0;
   @override
   Widget build(BuildContext context) {
          final List<Widget>pageOption = [
-ManageStore(),MyOrders(),ChatScreen()
+ManageStore(),ItemManagePage(),OrdersPage(),ChatScreen()
 ];
     return Consumer<SellerDetailsProvider>(
       builder: (context, data, child) {
@@ -137,6 +138,7 @@ ManageStore(),MyOrders(),ChatScreen()
           key: _bottomNavigationKey,
           items: <Widget>[
             Icon(Icons.store, size: 30,),
+            Icon(Icons.library_add,size: 30,),
             Icon(Icons.shopping_basket, size: 30),
             Icon(Icons.chat, size: 30),
             
