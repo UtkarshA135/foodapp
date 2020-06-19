@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'rating.dart';
 import 'package:maps/diners/storeDetailsbloc.dart';
 import 'package:maps/diners/storeComponents/store.dart';
 
@@ -44,6 +44,16 @@ class _MyStorePageState extends State<MyStorePage> {
 
   @override
   Widget build(BuildContext context) {
+    void showRatingPanel(){ showModalBottomSheet(context: context, builder: (context){
+        return Container(
+         // padding : EdgeInsets.symmetric(vertical : 20.0 , horizontal : 60.0),
+          child: StarFeedback(),
+
+        );
+    }
+    );
+
+    }
     print(widget.store);
     return ChangeNotifierProvider(
       create: (context) => MyStorePageBLoc(widget.store),
@@ -81,6 +91,8 @@ class _MyStorePageState extends State<MyStorePage> {
                             icon: Icon(Icons.call),
                             onPressed: () =>
                                 _launchURL("tel:${widget.store.contact}")),
+                                IconButton(icon: Icon(Icons.star_border),
+                                onPressed: () => showRatingPanel(),)
                       ],
                       iconTheme: IconThemeData(
                         color: Colors.black87,
@@ -142,8 +154,11 @@ class _MyStorePageState extends State<MyStorePage> {
                       heading: 'Dinner',
                       storeID: widget.store.id,
                       scaffoldkey: _scaffoldKey,
-                    )
+                    ),
+                    
+                    
                   ],
+                  
                 )));
       }),
     );

@@ -2,6 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:wiredash/wiredash.dart';
 import 'package:maps/models/about.dart';
 import 'package:maps/models/feedback.dart';
 import 'package:maps/models/notification.dart';
@@ -191,10 +192,8 @@ print(url);
         ListTile(
           title: Text('Feedback'),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Feedbacks()),
-            );
+          Wiredash.of(context).show();
+           
           },
         ),
         Divider(

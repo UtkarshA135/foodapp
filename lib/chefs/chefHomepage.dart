@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maps/chefs/all_diners_screen.dart';
 
 import 'dart:async';
 import 'package:maps/chefs/chefinfo.dart';
@@ -90,45 +91,13 @@ int _page = 0;
   @override
   Widget build(BuildContext context) {
          final List<Widget>pageOption = [
-ManageStore(),ItemManagePage(),OrdersPage(),ChatScreen()
+ManageStore(),ItemManagePage(),OrdersPage(),AllUsersScreen()
 ];
     return Consumer<SellerDetailsProvider>(
       builder: (context, data, child) {
         if (data.isDataLoaded)
           return Scaffold(
-            appBar: AppBar(
-              title: Hero(
-                tag: 'Seller',
-                child: Text(
-                  storeName ?? "Store",
-                  style: TextStyle(
-                      fontFamily: 'Archia', fontWeight: FontWeight.bold),
-                ),
-              ),
-              centerTitle: true,
-              backgroundColor:   Colors.redAccent[700],
-              actions: <Widget>[],
-             /* bottom: TabBar(
-                unselectedLabelColor: Colors.white,
-                labelColor: Colors.blue[50],
-                tabs: [
-                  new Tab(
-                    icon: new Icon(Icons.shopping_basket),
-                    text: 'Orders',
-                  ),
-                  new Tab(
-                    icon: new Icon(Icons.view_list),
-                    text: 'Items Catalog',
-                  ),
-                ],
-                controller: _tabController,
-                indicatorColor: Colors.white,
-                indicatorSize: TabBarIndicatorSize.tab,
-              ),*/
-              bottomOpacity: 1,
-              elevation: 1.0,
-            ),
-           
+          
              body: pageOption[_page],
 
         bottomNavigationBar: CurvedNavigationBar(

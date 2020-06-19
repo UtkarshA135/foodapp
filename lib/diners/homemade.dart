@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:maps/diners/feedback.dart';
 import 'package:maps/diners/storePage.dart';
+import 'package:maps/models/payments.dart';
+import 'package:wiredash/wiredash.dart';
 import 'filters.dart';
+import 'package:maps/services/authservice.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'account.dart';
@@ -9,7 +12,7 @@ import 'package:maps/diners/about.dart';
 import 'notification.dart';
 import 'feedback.dart';
 import 'pastorder.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 class Homemade extends StatefulWidget {
   @override
   _HomemadeState createState() => _HomemadeState();
@@ -41,6 +44,11 @@ class _HomemadeState extends State<Homemade> {
         backgroundColor: Colors.white,
       ),
     );
+       Future<void> resetUserType() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('User Type', 'None');
+  }
+
     final drawerItems = ListView(
       children: <Widget>[
         drawerHeader,
@@ -58,7 +66,11 @@ class _HomemadeState extends State<Homemade> {
         ),
         ListTile(
             title: Text('Switch to Chef mode'),
-            onTap: () {} //=> Navigator.of(context).push(_NewPage(2)),
+            onTap: () async{
+                  await resetUserType();
+                          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context)=>HomePage()));
+
+            } //=> Navigator.of(context).push(_NewPage(2)),
             ),
         Divider(
           thickness: 1,
@@ -78,11 +90,11 @@ class _HomemadeState extends State<Homemade> {
           color: Colors.grey,
         ),
         ListTile(
-          title: Text('Notifications'),
+          title: Text('Payments'),
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Notifications()),
+              MaterialPageRoute(builder: (context) => Payments()),
             );
           },
         ),
@@ -93,10 +105,7 @@ class _HomemadeState extends State<Homemade> {
         ListTile(
           title: Text('Feedback'),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Feedbacks()),
-            );
+            Wiredash.of(context).show();
           },
         ),
         Divider(
@@ -118,7 +127,11 @@ class _HomemadeState extends State<Homemade> {
         ),
         ListTile(
           title: Text('Logout'),
-          onTap: () {},
+          onTap: () async{
+         AuthService().signOut();
+                          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context)=> AuthService().handleAuth()));
+
+          },
         ),
       ],
     );

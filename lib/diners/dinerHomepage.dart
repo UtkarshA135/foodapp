@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:maps/chefs/orderpages.dart';
+import 'package:maps/diners/all_chefs_screen.dart';
 import 'package:maps/diners/cart.dart';
 import 'package:maps/diners/previousOrders.dart';
 import 'package:maps/diners/storePage.dart';
@@ -24,7 +25,7 @@ class _DinerHomePageState extends State<DinerHomePage> {
   @override
   Widget build(BuildContext context) {
      final List<Widget>pageOption = [
-Homemade(),CartPage(),PrevOrdersPage()
+StoresPage(),CartPage(),AllUsersScreen()
 ];
     return Scaffold(
       //appBar: ,
