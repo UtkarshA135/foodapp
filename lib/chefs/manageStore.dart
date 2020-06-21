@@ -34,7 +34,7 @@ class _ManageStoreState extends State<ManageStore> {
   TabController _tabController;
   String storeName = " ";
   String phoneNo = " ";
-  List cuisineslist =  List();
+  List<String> cuisineslist =  List<String>();
   List imgurls =  List();
   String sellerName = " ";
   String storeId;
@@ -83,7 +83,22 @@ class _ManageStoreState extends State<ManageStore> {
     user = await getUser();
     isDataLoaded =
         Provider.of<SellerDetailsProvider>(context, listen: false).isDataLoaded;
-    _loadStoreDetails();
+    await _loadStoreDetails();
+    await choice();
+
+  }
+  choice() async {
+for(int i =0 ; i< cuisineslist.length ; i++)
+{
+  for(int j = 0; j< cuisine.length ; j++)
+  {
+    if(cuisineslist[i].compareTo(cuisine[j])==0)
+    {
+      choicesChipcuisine[j] = true;
+      print(choicesChipcuisine[j]);
+    }
+  }
+}
   }
 _loadStoreDetails() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -100,13 +115,15 @@ _loadStoreDetails() async {
       setState(() {
         this.storeName = storeDetails.data['name'];
         this.phoneNo = storeDetails.data['phno'];
-     
+        this.imgurls = storeDetails['urls'];
+       // this.cuisineslist = storeDetails['cuisines'];
         this.sellerName = sellerDetails.data['name'];
       });
       pref.setString("storename", storename);
     } else {
       setState(() {
         this.storeName = storename;
+        print(storeName);
       });
     }
   }
@@ -128,7 +145,9 @@ print(url);
  setState(() {
       imgUrls.add(url);
     });
-   
+   await Firestore.instance.collection('stores').document(storeid).updateData({
+        "urls": FieldValue.arrayUnion([url]),
+   });
     print(imgUrls);
   }
  
@@ -302,7 +321,7 @@ print(url);
                  child: Container(
               height: 200,
               child:
-                   imgUrls.length == 0 ? Text('Upload Images of your Kitchen / Work Area to ensure Safety measures'): ListView(scrollDirection: Axis.horizontal, children:  List<Widget>.generate(_imgs.length, (index) {
+                   imgurls.length == 0 ? Text('Upload Images of your Kitchen / Work Area to ensure Safety measures'): ListView(scrollDirection: Axis.horizontal, children:  List<Widget>.generate(imgurls.length, (index) {
                         return 
                   Card(
                    
@@ -316,7 +335,7 @@ print(url);
                             },
                             child: Expanded(
                               child: Image(
-                              image: NetworkImage(imgUrls[index]),
+                              image: NetworkImage(imgurls[index]),
                                 
                               ),
                             ))),
@@ -379,13 +398,29 @@ print(url);
               (i) => Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: FilterChip(
-                  selected: choicesChipcuisine[i],
+                  selected:  choicesChipcuisine[i],
                   onSelected: (t) {
+                    
+                     //{}
+                     {
                     setState(() {
-                      choicesChipcuisine[i] = !choicesChipcuisine[i];
+                      //choicesChipcuisine[i] = !choicesChipcuisine[i];
+                    // 
+                       choicesChipcuisine[i] = !choicesChipcuisine[i];
+                     
                   
-                    });
-                 
+                    });}
+                 if(choicesChipcuisine[i])
+                 {
+                       Firestore.instance.collection('stores').document(storeid).updateData({
+        "cuisines": FieldValue.arrayUnion([cuisine[i]]),
+   });
+                 }
+                 else{
+                   Firestore.instance.collection('stores').document(storeid).updateData({
+        "cuisines": FieldValue.arrayRemove([cuisine[i]]),
+   });
+                 }
                   },
                   label: Text(cuisine[i]),
                 ),

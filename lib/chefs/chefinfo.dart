@@ -40,7 +40,8 @@ Future<int> registerSeller(String shopname,String phno1,String sellername,String
     'sellerId':user.uid,
     'location':location,
     'searchKey':sk,
-     
+     'cuisines': FieldValue.arrayUnion(["American"]),
+     'urls': FieldValue.arrayUnion(['https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQge3zH1vQU2BtGQLBTEeyYY7oY15AXTufAT1EbnKZqbooIfsjI&usqp=CAU']),
   });
 
   await Firestore.instance.collection('stores').document(shopId).setData(store).catchError((onError){statusCode =3;});
