@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:location/location.dart';
 
-Future<int> registerBuyer(String name )async{
+Future<int> registerBuyer(String name , String phoneNumber)async{
    
   int statusCode =1;
   
@@ -17,6 +17,7 @@ Future<int> registerBuyer(String name )async{
     'name':name,
     'location':location,
     'uid':user.uid,
+    'phoneNo':phoneNumber,
   });
   await ref.setString("buyerLocation", location.toString()).catchError((err){
     print(err);
@@ -27,6 +28,7 @@ Future<int> registerBuyer(String name )async{
 
   UserUpdateInfo userUpdateInfo = UserUpdateInfo();
   userUpdateInfo.displayName = name;
+  
   await user.updateProfile(userUpdateInfo).catchError((err){
     statusCode = 3;
     print(err);

@@ -59,7 +59,21 @@ class _OrdersPageState extends State<OrdersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+      child :
+      Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.red[600],
+        elevation: 3.0,
+        title:Text("My Orders",style:TextStyle(
+          color : Colors.white,
+          fontFamily: "Pacifico",
+          fontSize: 25.0,
+          fontWeight: FontWeight.bold
+        )),
+        centerTitle:true,
+
+      ),
       body: StreamBuilder<QuerySnapshot>(
           stream: Firestore.instance
               .collection('chefs')
@@ -68,10 +82,12 @@ class _OrdersPageState extends State<OrdersPage> {
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+               List<DocumentSnapshot> prevOrdersdocs=snapshot.data.documents;
               List<OrderData> currentOrders = snapshot.data.documents
                   .map((doc) => OrderData.fromJson(doc))
                   .toList();
 
+              List<String> orderids=  prevOrdersdocs.map((doc)=>doc.documentID.toString()).toList();
               
 
               if (currentOrders.length == 0)
@@ -107,6 +123,7 @@ class _OrdersPageState extends State<OrdersPage> {
                       dist: _calcDistance(currentOrders[index].userLocation,),
                       isSeller: true,
                       user: user,
+                      orderid: orderids[index]
                       );
                 },
               );
@@ -114,6 +131,6 @@ class _OrdersPageState extends State<OrdersPage> {
               return Center(child: CircularProgressIndicator());
             }
           }),
-    );
+    ));
   }
 }

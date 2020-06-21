@@ -29,7 +29,7 @@ class _PrevOrdersPageState extends State<PrevOrdersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true,title: Text('Previous Orders',style: TextStyle(fontFamily: 'Archia'),),backgroundColor: Colors.lightGreen,),
+      appBar: AppBar(centerTitle: true,title: Text('Previous Orders',style: TextStyle(fontFamily: 'Lobster'),),backgroundColor: Colors.red[600],),
       body: StreamBuilder<QuerySnapshot>(
           stream: Firestore.instance
               .collection('diners')

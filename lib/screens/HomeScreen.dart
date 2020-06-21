@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                     Center(
-                        child: Image.asset('assets/kiranaseva.png')
+                        child: Image.asset('assets/logo.jpg')
                            )
                     
                   ]));

@@ -2,6 +2,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:maps/screens/HomeScreen.dart';
+import 'package:maps/services/authservice.dart';
 import 'package:wiredash/wiredash.dart';
 import 'package:maps/models/about.dart';
 import 'package:maps/models/feedback.dart';
@@ -11,7 +13,7 @@ import 'chefinfo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
-import 'package:maps/services/authservice.dart';
+import 'package:maps/chefs/account.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:async';
 import 'package:maps/services/chefsDetailProvider.dart';
@@ -62,6 +64,10 @@ class _ManageStoreState extends State<ManageStore> {
     'Texan',];
     List<File> _imgs;
     List<String> imgUrls = List ();
+    Future<void> resetUserType() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('User Type', 'None');
+  }
   _onImageButtonPressed(ImageSource source, {bool singleImage = false}) async {
     var imgs;
     imgs = await MultiMediaPicker.pickImages(source: source, singleImage: singleImage);
@@ -137,6 +143,7 @@ print(url);
       ),
       currentAccountPicture: CircleAvatar(
         backgroundColor: Colors.white,
+        backgroundImage: AssetImage("assets/chefs.jpg"),
       ),
     );
     final drawerItems = ListView(
@@ -147,7 +154,7 @@ print(url);
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ChefAccount(),
+                MaterialPageRoute(builder: (context) => Chefaccount(),
               ));
             }),
         Divider(
@@ -156,7 +163,11 @@ print(url);
         ),
         ListTile(
             title: Text('Switch to buyer mode'),
-            onTap: () {} //=> Navigator.of(context).push(_NewPage(2)),
+            onTap: () async{
+              await resetUserType();
+                          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context)=>HomeScreen()));
+
+            } //=> Navigator.of(context).push(_NewPage(2)),
             ),
         Divider(
           thickness: 1,
@@ -223,7 +234,7 @@ print(url);
         ),
       ],
     );
-    return SafeArea(
+    return  SafeArea(
       child: Scaffold(
         key: scaffoldKey,
         endDrawer: Drawer(

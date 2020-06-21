@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:maps/diners/feedback.dart';
 import 'package:maps/diners/storePage.dart';
 import 'package:maps/models/payments.dart';
@@ -12,6 +12,7 @@ import 'package:maps/diners/about.dart';
 import 'notification.dart';
 import 'feedback.dart';
 import 'pastorder.dart';
+import 'package:maps/screens/HomeScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class Homemade extends StatefulWidget {
   @override
@@ -68,7 +69,7 @@ class _HomemadeState extends State<Homemade> {
             title: Text('Switch to Chef mode'),
             onTap: () async{
                   await resetUserType();
-                          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context)=>HomePage()));
+                          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context)=>HomeScreen()));
 
             } //=> Navigator.of(context).push(_NewPage(2)),
             ),
@@ -373,4 +374,4 @@ class MyClip extends CustomClipper<Path> {
     return true;
   }
 }
-
+*/

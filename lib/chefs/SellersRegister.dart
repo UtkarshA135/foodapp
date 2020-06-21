@@ -98,18 +98,16 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
   }
 
   Widget _entryField(String title, {TextEditingController controllervar}) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
+    return 
+    Padding(
+                padding: EdgeInsets.symmetric(vertical:6.0,horizontal:16.0),
+                child :Container(
+      margin: EdgeInsets.symmetric(vertical: 3.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          SizedBox(
-            height: 10,
-          ),
+        
+         
           TextFormField(
               validator: (value) {
                 if (value.isEmpty) {
@@ -120,36 +118,43 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
               // obscureText: isPassword,
               controller: controllervar,
               decoration: InputDecoration(
-                  border: InputBorder.none,
-                  // fillColor: Color(0xfff3f3f4),
-                  filled: true))
+              labelText: title,
+                  fillColor: Colors.white,
+                                    filled: true,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide:BorderSide(color: Colors.grey[900],),
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                     focusedBorder: OutlineInputBorder(),))
         ],
       ),
-    );
+     ) );
   }
 
   Widget _submitButton() {
-    return FlatButton(
+    return Padding(padding: EdgeInsets.symmetric(vertical:8.0,horizontal:50.0),child :
+    MaterialButton(
+    
+        minWidth: 50.0,
+  
+                              height: 60.0,
+  
+                              highlightColor: Colors.amberAccent[700],
+  
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+  
+                              color: Colors.amberAccent[700],
+  
       onPressed: onPressRegister,
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 15),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            boxShadow: <BoxShadow>[],
-            gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [Color(0xfffbb448), Color(0xfff7892b)])),
-        child: isLoading
+      child:
+        isLoading
             ? CupertinoActivityIndicator()
             : Text(
                 'Register Now',
-                style: TextStyle(fontSize: 20, color: Colors.white),
+                style: TextStyle(fontSize: 20, color: Colors.black),
               ),
-      ),
-    );
+      
+     ) );
   }
 
   Widget _loginAccountLabel() {
@@ -225,10 +230,22 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
       );
     } else
       return Scaffold(
-          backgroundColor: dynamicbgcolor,
+          backgroundColor: Colors.white,
           key: _scaffoldKey,
-          body: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+          body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        
+        decoration: BoxDecoration(
+          /*image: DecorationImage(
+            image: AssetImage("assets/register.jpg"),
+            fit: BoxFit.cover,
+          ),*/
+     /*     gradient: LinearGradient(colors: [Colors.red[900],Colors.red[700],Colors.red,Colors.red[600],Colors.red,Colors.red[400]],
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter
+          ),*/
+                  ),
             child: Form(
               key: _formKey,
               child: ListView(
@@ -240,17 +257,27 @@ class _SellerRegisterPageState extends State<SellerRegisterPage> {
                   RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
-                      text: 'Register your store with us',
-                      style: TextStyle(color: dynamiciconcolor, fontSize: 25),
+                      text: 'Register your Kitchen with us',
+                      style: TextStyle(color: dynamiciconcolor, fontSize: 25,
+                      fontFamily: "Lobster"
+                      ),
                     ),
+                  ), SizedBox(
+                    height: 20,
+                    //width: 50,
                   ),
-
+                  Padding(padding:  EdgeInsets.symmetric(vertical:8.0,horizontal:50.0),child: CircleAvatar(
+                        radius: 125.0,
+                        backgroundColor: Colors.white,
+                        backgroundImage: AssetImage("assets/logo.jpg"),
+                      ),
+                  ),
                   SizedBox(
-                    height: 50,
+                    height: 10,
                   ),
                   _formfieldswidgets(),
                   SizedBox(
-                    height: 20,
+                    height: 5,
                   ),
                   _submitButton(),
                   // Expanded(

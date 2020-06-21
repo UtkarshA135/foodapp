@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:maps/diners/cart/orderPlaced.dart';
 import 'package:upi_india/upi_india.dart';
 
 
 
-class Payments extends StatelessWidget {
+
+
+class Payments extends StatefulWidget {
+  String upi ;
+  String amt;
+  Payments({this.upi,this.amt});
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Test UPI',
-      home: HomePage(),
-    );
-  }
+  _PaymentsState createState() => _PaymentsState(upiid: upi,amount: amt);
 }
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class _PaymentsState extends State<Payments> {
+  String upiid;
+  String amount;
+  _PaymentsState( {this.upiid,this.amount});
   Future<UpiResponse> _transaction;
   UpiIndia _upiIndia = UpiIndia();
   List<UpiApp> apps;
-
+   
   @override
   void initState() {
+    print(upiid);
+    print(amount);
     _upiIndia.getAllUpiApps().then((value) {
       setState(() {
         apps = value;
@@ -36,11 +37,11 @@ class _HomePageState extends State<HomePage> {
   Future<UpiResponse> initiateTransaction(String app) async {
     return _upiIndia.startTransaction(
       app: app,
-      receiverUpiId: '9078600498@ybl',
+      receiverUpiId: upiid,
       receiverName: 'Md Azharuddin',
       transactionRefId: 'TestingUpiIndiaPlugin',
       transactionNote: 'Not actual. Just an example.',
-      amount: 1.00,
+      amount: double.parse(amount),
     );
   }
 
@@ -129,12 +130,20 @@ class _HomePageState extends State<HomePage> {
                   switch (status) {
                     case UpiPaymentStatus.SUCCESS:
                       print('Transaction Successful');
+                    Navigator.pushReplacement(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => OrderPlacedPage()));
                       break;
                     case UpiPaymentStatus.SUBMITTED:
                       print('Transaction Submitted');
                       break;
                     case UpiPaymentStatus.FAILURE:
                       print('Transaction Failed');
+                      Navigator.pushReplacement(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => OrderPlacedPage()));
                       break;
                     default:
                       print('Received an Unknown transaction status');

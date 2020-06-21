@@ -2,7 +2,7 @@ import 'package:maps/models/orderData.dart';
 import 'package:maps/chefs/individualOrdersPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:maps/chefs/perorder.dart';
 class OrderCard extends StatelessWidget {
   final OrderData order;
   final double dist;
@@ -38,6 +38,17 @@ class OrderCard extends StatelessWidget {
                   trailing: IconButton(
                     icon: Icon(Icons.arrow_forward_ios),
                     onPressed: () {
+                      isSeller ? Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => PerOrder(
+                                    orderData: order,
+                                    distance: dist,
+                                    isSeller: isSeller,
+                                    user: user,
+                                    orderid: orderid,
+                                  ))):
+
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
@@ -52,6 +63,16 @@ class OrderCard extends StatelessWidget {
                   ),
                   isThreeLine: true,
                   onTap: () {
+                    isSeller ?  Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => PerOrder(
+                                    orderData: order,
+                                    distance: dist,
+                                    isSeller: isSeller,
+                                    user: user,
+                                    orderid: orderid,
+                                  ))):
                     Navigator.push(
                         context,
                         new MaterialPageRoute(

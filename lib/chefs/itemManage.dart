@@ -32,9 +32,17 @@ class _ItemManagePageState extends State<ItemManagePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title : Text("Set Your Menu Card"),
+    return Scaffold(appBar: AppBar(
+     // backgroundColour :
+      title : Text("Set Your Menu Card",
+    style: TextStyle(
+      fontFamily: "Lobster"
+    ),
+    
+    ),
+    
     centerTitle: true,
-    backgroundColor: Colors.redAccent,),
+     backgroundColor: Colors.red[600],),
     body :
      CustomScrollView(
       physics: BouncingScrollPhysics(),

@@ -19,7 +19,7 @@ reportView(
     bytes:
         (await rootBundle.load('assets/foodie.jpg')).buffer.asUint8List(),
   );
-  final PdfColor baseColor = PdfColors.teal;
+  final PdfColor baseColor = PdfColors.red800;
   final PdfColor accentColor = PdfColors.blueGrey900;
   List<List<String>> billtableitems = new List();
   billtableitems.add(<String>['Item Name', 'Quantity', 'Total Price']);
@@ -124,14 +124,14 @@ reportView(
               style: material.TextStyle(fontFamily: 'Archia'),
             ),
             centerTitle: true,
-            backgroundColor: material.Colors.lightGreen,
+            backgroundColor: material.Colors.red[800],
             actions: <material.Widget>[
               material.IconButton(icon: material.Icon(material.Icons.share),
               onPressed: ()=>
             FlutterShare.shareFile(
-      title: 'Kirana Seva Invoice',
-      chooserTitle: 'Kirana Seva Invoice',
-      text: 'E-bill for order on Kirana Seva',
+      title: 'Local Kitchens Invoice',
+      chooserTitle: 'Local Kitchens Invoice',
+      text: 'E-bill for order on Local Kitchens',
       filePath: path,
     ),)],
           ),

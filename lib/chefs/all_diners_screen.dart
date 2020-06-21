@@ -61,18 +61,15 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
     return Scaffold(
     
         appBar: AppBar(
-          elevation: 3.0,
+        //  elevation: 3.0,
+          backgroundColor: Colors.white,
+        title: Center(child: Text('CHATS',
+        style: TextStyle(
+          color: Colors.black,
+          fontFamily: "Lobster"
+        ),
+        )),
           // title: Text("All Users"),
-          title: Text(" Chat with Diner",
-            style: TextStyle(
-              fontFamily: 'Lobster',
-              color: Colors.black,
-              
-            //  fontSize: ScreenUtil().setSp(70.0),
-            ),
-          ),
-           centerTitle: true,
-          backgroundColor:  Colors.redAccent[800],
         ),
         body: usersList != null
              ? (usersList.length==0?
@@ -93,7 +90,7 @@ class _AllUsersScreenState extends State<AllUsersScreen> {
                   SizedBox(height: 20.0),
                   Image.network('https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQge3zH1vQU2BtGQLBTEeyYY7oY15AXTufAT1EbnKZqbooIfsjI&usqp=CAU'),
                   SizedBox(height: 30.0),
-                  Text('No matches yet :(',
+                  Text('No Diners yet :(',
                   style: TextStyle(
                     fontSize: ScreenUtil().setSp(60.0),
                     letterSpacing: 1.1,

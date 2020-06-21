@@ -63,7 +63,7 @@ dependencies:
   bubble: ^1.1.9+1
   wiredash: ^0.2.0
   upi_india: ^2.1.2
- 
+  simple_animations: ^2.2.1
  
 
 dev_dependencies:

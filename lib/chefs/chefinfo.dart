@@ -10,7 +10,7 @@ final CollectionReference userCollection = Firestore.instance.collection('chefs'
 Future<int> registerSeller(String shopname,String phno1,String sellername,String phno2,String shopDesc)async{
    
   int statusCode =1;
-  
+  String sk = shopname.substring(0,1);
   FirebaseUser user = await getUser();
 
   //create a new user
@@ -39,7 +39,7 @@ Future<int> registerSeller(String shopname,String phno1,String sellername,String
     'phno':phno1,
     'sellerId':user.uid,
     'location':location,
-    
+    'searchKey':sk,
      
   });
 

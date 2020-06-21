@@ -1,24 +1,36 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:maps/chefs/chefinfo.dart';
 import 'package:maps/diners/FadeAnimation.dart';
 import 'package:flutter/material.dart';
 import 'package:maps/services/authservice.dart';
-class Account extends StatefulWidget {
+import 'package:maps/services/chefsDetailProvider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+class Chefaccount extends StatefulWidget {
   @override
-  _AccountState createState() => _AccountState();
+  _ChefaccountState createState() => _ChefaccountState();
 }
 
-class _AccountState extends State<Account> {
+class _ChefaccountState extends State<Chefaccount> {
      Address storeaddress = new Address();
   FirebaseUser user;
    final FirebaseAuth _auth = FirebaseAuth.instance;
-   var dinerDetails;
-   String name;
-   String phonenumber;
-   String adddres;
-    String dinerName;
-    String phoneNo;
+    String storeName = " ";
+    String des =" ";
+  String phoneNo = " ";
+  String shopName;
+  var sellerDetails;
+  bool isDataLoaded = false;
+  String storeId;
+  String storeid ;
+    String sellerName = " ";
+  var storeDetails;
+  // String adddres;
+    String chefname;
+    String description;
+    String phoneNumber;
       var location;
    @override
   void initState() {
@@ -27,36 +39,53 @@ class _AccountState extends State<Account> {
    
     super.initState();
   }
-  init()async{
-user = await  _auth.currentUser();
- dinerDetails = await Firestore.instance.collection("diners").document(user.uid).get();
- setState(() {
-   dinerName = dinerDetails.data['name'];
-   location = dinerDetails.data['location'];
-   phoneNo = dinerDetails.data['phoneNo'];
-   
- });
- print(dinerName);
- print(phoneNo);
- print(location);
- await _getAddress(location);
- }
-  _getAddress(List<dynamic> coordinates) async {
-    var addresses = await Geocoder.local.findAddressesFromCoordinates(
-        Coordinates(coordinates[0], coordinates[1]));
-    var firstresult = addresses.first;
-    setState(() {
-      storeaddress = firstresult;
-    });
-  
+    init() async {
+    user = await getUser();
+    isDataLoaded =
+        Provider.of<SellerDetailsProvider>(context, listen: false).isDataLoaded;
+    _loadStoreDetails();
   }
-  Future updateUserData( String name , String phonenumber,)
+_loadStoreDetails() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String storename = await pref.get("storename");
+    if (storename == null) {
+       sellerDetails = await Firestore.instance
+          .collection('chefs')
+          .document(user.uid)
+          .get();
+       storeid = sellerDetails.data['storeId'];
+      this.storeId = storeid;
+       storeDetails =
+          await Firestore.instance.collection('stores').document(storeid).get();
+      setState(() {
+        this.storeName = storeDetails.data['name'];
+        this.phoneNo = storeDetails.data['phno'];
+        this.des = storeDetails.data['description'];
+        this.sellerName = sellerDetails.data['name'];
+      });
+      pref.setString("storename", storename);
+    } else {
+      setState(() {
+        this.storeName = storename;
+      });
+    }
+  }
+  Future updateUserData( String name , String phonenumber,String description , String shopname)
 async
 {
-  return await Firestore.instance.collection("diners").document(user.uid).updateData({
+   await Firestore.instance.collection("chefs").document(user.uid).updateData({
     //'imageURL ': imageURL,
-    'name' : name,
-    'phoneNo' : phonenumber,
+    'name' : chefname,
+    'phno1' : phoneNumber,
+    
+   // 'mylikes' : { uid : true},
+   // 'likes' : { uid : true},
+  
+   } );
+  await Firestore.instance.collection("stores").document(storeid).updateData({
+    //'imageURL ': imageURL,
+    'description' : description,
+    'name' : shopName,
     
    // 'mylikes' : { uid : true},
    // 'likes' : { uid : true},
@@ -66,7 +95,7 @@ async
 }
   @override
   Widget build(BuildContext context) {
-  return dinerDetails != null ?
+  return storeDetails != null ?
   Scaffold(
       body: Container(
         width: double.infinity,
@@ -131,15 +160,15 @@ async
                                   border: Border(bottom: BorderSide(color: Colors.grey[200]))
                                 ),
                                 child: TextFormField(
-                                initialValue: dinerDetails.data['name'] !=null ? dinerDetails.data['name'] :"name" ,
+                                initialValue: sellerName!=null ? sellerName:"name" ,
                                   decoration: InputDecoration(
-                                    labelText: "Name",
+                                    labelText: "Chef Name",
                                     labelStyle: TextStyle(color: Colors.grey),
                                     border: InputBorder.none
                                   ),
                                   onChanged: (value){
                           setState(() {
-                            name = value;
+                            chefname = value;
                           });
                                   },
                                 ),
@@ -151,8 +180,8 @@ async
                                 ),
                                 child: TextFormField(
                                  initialValue: 
-                                dinerDetails.data["phoneNo"]!=null ? dinerDetails.data["phoneNo"] : "Phone Number",
-                                  onChanged: (value) => phonenumber=value,
+                                 phoneNo != null ? phoneNo : "Phone Number",
+                                  onChanged: (value) => phoneNumber=value,
                                   decoration: InputDecoration(
                                     labelText: "Phone Number",
                                     labelStyle: TextStyle(color: Colors.grey),
@@ -160,7 +189,38 @@ async
                                   ),
                                 ),
                               ),
-                            
+                             Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: Colors.grey[200]))
+                                ),
+                                child: TextFormField(
+                                 initialValue: 
+                                 storeName != null ? storeName : "Store Name",
+                                  onChanged: (value) => shopName=value,
+                                  decoration: InputDecoration(
+                                    labelText: "Kitchen Name",
+                                    labelStyle: TextStyle(color: Colors.grey),
+                                    border: InputBorder.none
+                                  ),
+                                ),
+                              ),
+                               Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  border: Border(bottom: BorderSide(color: Colors.grey[200]))
+                                ),
+                                child: TextFormField(
+                                 initialValue: 
+                                 des != null ? des : "descrption",
+                                  onChanged: (value) => description=value,
+                                  decoration: InputDecoration(
+                                    labelText: "Descrption",
+                                    labelStyle: TextStyle(color: Colors.grey),
+                                    border: InputBorder.none
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         )),
@@ -219,7 +279,7 @@ async
                                
                                 child :GestureDetector(
                                    onTap: ()async{
-                                 await updateUserData(name ?? dinerName,phonenumber?? phoneNo);
+                                await updateUserData(chefname ?? sellerName,phoneNumber?? phoneNo, description ?? des , shopName?? storeName);
                                 },
                                   child :
                                 Center(

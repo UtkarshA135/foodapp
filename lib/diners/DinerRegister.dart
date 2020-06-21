@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:maps/diners/dinerHomepage.dart';
 import 'package:maps/diners/dinerinfo.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class _BuyerRegisterPageState extends State<BuyerRegisterPage> {
   bool isLoading = false;
   bool showLoading = true;
   TextEditingController _namecontroller;
+  TextEditingController _phoneNocontroller;
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
 
@@ -22,6 +24,7 @@ class _BuyerRegisterPageState extends State<BuyerRegisterPage> {
     super.initState();
     checkuserExists();
     this._namecontroller = new TextEditingController();
+    this._phoneNocontroller = new TextEditingController();
   }
 
   checkuserExists() async {
@@ -47,6 +50,7 @@ class _BuyerRegisterPageState extends State<BuyerRegisterPage> {
       });
       registerBuyer(
               _namecontroller?.text ?? "1",
+              _phoneNocontroller?.text ??"2"
               )
           .then((statusCode) {
         setState(() {
@@ -109,7 +113,9 @@ class _BuyerRegisterPageState extends State<BuyerRegisterPage> {
   }
 
   Widget _entryField(String title, {TextEditingController controllervar}) {
-    return Container(
+    return  Padding(
+                padding: EdgeInsets.symmetric(vertical:6.0,horizontal:16.0),
+                child :Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,38 +137,44 @@ class _BuyerRegisterPageState extends State<BuyerRegisterPage> {
               // obscureText: isPassword,
               controller: controllervar,
               decoration: InputDecoration(
-                  border: InputBorder.none,
-                  //fillColor: Color(0xfff3f3f4),
-                  filled: true))
+                 labelText: title,
+                  fillColor: Colors.white,
+                                    filled: true,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide:BorderSide(color: Colors.grey[900],),
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                     focusedBorder: OutlineInputBorder(),)
+                ),
         ],
       ),
-    );
+      )  );
   }
 
   Widget _submitButton() {
-    return FlatButton(
+    return   Padding(padding: EdgeInsets.symmetric(vertical:8.0,horizontal:50.0),child :
+    MaterialButton(
+    
+        minWidth: 50.0,
+  
+                              height: 60.0,
+  
+                              highlightColor: Colors.amberAccent[700],
+  
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+  
+                              color: Colors.amberAccent[700],
+  
       onPressed: onPressRegister,
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 15),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            boxShadow: <BoxShadow>[
-             
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [Color(0xfffbb448), Color(0xfff7892b)])),
-        child: isLoading
-            ? CircularProgressIndicator()
+      child:
+        isLoading
+            ? CupertinoActivityIndicator()
             : Text(
                 'Register Now',
-                style: TextStyle(fontSize: 20, color: Colors.white),
+                style: TextStyle(fontSize: 20, color: Colors.black),
               ),
-      ),
-    );
+      
+     ) );
   }
 
   Widget _loginAccountLabel() {
@@ -199,6 +211,7 @@ class _BuyerRegisterPageState extends State<BuyerRegisterPage> {
     return Column(
       children: <Widget>[
         _entryField("Name", controllervar: _namecontroller),
+        _entryField("Phone Number", controllervar: _phoneNocontroller)
       ],
     );
   }
@@ -218,13 +231,17 @@ class _BuyerRegisterPageState extends State<BuyerRegisterPage> {
     } else
       return Scaffold(
           key: _scaffoldKey,
-          body: Padding(
+          body:Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
             child: Form(
               key: _formKey,
               child: ListView(
                 physics: BouncingScrollPhysics(),
                 children: <Widget>[
+
                     SizedBox(
                     height: 50,
                   ),
@@ -233,13 +250,23 @@ class _BuyerRegisterPageState extends State<BuyerRegisterPage> {
       text: 
         TextSpan(
           text: 'Register',
-          style: TextStyle(color:dynamiciconcolor,fontSize: 25),
+          style: TextStyle(color:dynamiciconcolor,fontSize: 25,
+          fontFamily: "Lobster"
+          ),
+          
         ),
       
                    ),
                   SizedBox(
-                    height: 50,
+                    height: 20,
                   ),
+                    Padding(padding:  EdgeInsets.symmetric(vertical:8.0,horizontal:50.0),child: CircleAvatar(
+                        radius: 125.0,
+                        backgroundColor: Colors.white,
+                        backgroundImage: AssetImage("assets/logo.jpg"),
+                      ),
+                  ),
+
                   _formfieldswidgets(),
                   SizedBox(
                     height: 20,
@@ -256,6 +283,6 @@ class _BuyerRegisterPageState extends State<BuyerRegisterPage> {
                 ],
               ),
             ),
-          ));
+          )));
   }
 }

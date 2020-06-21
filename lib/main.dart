@@ -1,5 +1,10 @@
+import 'dart:io';
+
+import 'package:maps/chefs/SellersRegister.dart';
 import 'package:maps/chefs/chefHomepage.dart';
+import 'package:maps/diners/DinerRegister.dart';
 import 'package:maps/diners/dinerHomepage.dart';
+import 'package:maps/diners/homemade.dart';
 import 'package:maps/services/firebaseUserProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:maps/services/authservice.dart';
@@ -59,7 +64,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
        
       ),
-      home: DinerHomePage(),
+      home: BuyerRegisterPage(),
       
       ) );
   }
